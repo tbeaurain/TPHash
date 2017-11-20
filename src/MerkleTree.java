@@ -3,16 +3,27 @@ import java.security.NoSuchAlgorithmException;
 
 public class MerkleTree {
 
-	private MerkleTree leftMerkleTree = null;
-	private MerkleTree rightMerkleTree = null;
-	private Leaf leftLeaf = null;
-	private Leaf rightLeaf = null;
-	private byte[] hashValue;
-	private final MessageDigest messageDigest=null;
+	public MerkleTree leftMerkleTree = null;
+	public MerkleTree rightMerkleTree = null;
+	public Leaf leaf = null;
 
 	
 	public MerkleTree(){
-		
+	}
+	
+	public MerkleTree(Leaf leaf){
+		this.leaf = leaf;
+	}
+	
+	public MerkleTree( MerkleTree leftMerkleTree, Leaf leaf){
+		this.leaf = leaf;
+		this.leftMerkleTree = leftMerkleTree;
+	}
+	
+	public MerkleTree( MerkleTree leftMerkleTree, MerkleTree rightMerkleTree, Leaf leaf){
+		this.leaf = leaf;
+		this.leftMerkleTree = leftMerkleTree;
+		this.rightMerkleTree = rightMerkleTree;
 	}
 	
 	private void setMessageDigest(MessageDigest messageDigest){
@@ -24,53 +35,29 @@ public class MerkleTree {
 			}
 		}
 	}
-	
-	
-	private byte[] setAndUpdateMessageDigest(Leaf leaf) {
-		setMessageDigest(messageDigest);
-		final byte[] hashOfLogSingleEvent = leaf.getHashOfLogSingleEvent();
-		for (int i = 0; i < hashOfLogSingleEvent.length; i++) {
-			messageDigest.update(hashOfLogSingleEvent[i]);
-		}
-		hashValue = messageDigest.digest(hashOfLogSingleEvent);
-		return hashValue;
-	}
 
-	private void addChildSubTrees(final MerkleTree leftMerkleTree, final MerkleTree rightMerkleTree) {
-		setMessageDigest(messageDigest);
-		this.leftMerkleTree = leftMerkleTree;
-		this.rightMerkleTree = rightMerkleTree;
-
-		messageDigest.update(leftMerkleTree.getHashValue());
-		hashValue = messageDigest.digest(rightMerkleTree.getHashValue());
-	}
-
-	private void addChildLeafs(final Leaf leftLeaf, final Leaf rightLeaf) {
-		setMessageDigest(messageDigest);
-		this.leftLeaf = leftLeaf;
-		this.rightLeaf = rightLeaf;
-		messageDigest.update(setAndUpdateMessageDigest(leftLeaf));
-		hashValue = messageDigest.digest(setAndUpdateMessageDigest(rightLeaf));
-	}
-
-	public byte[] getHashValue() {
-		return hashValue;
-	}
-
-	public MerkleTree getLeftTree() {
+	public MerkleTree getLeftMerkleTree() {
 		return leftMerkleTree;
 	}
-	
-	public MerkleTree getRightTree() {
+
+	public void setLeftMerkleTree(MerkleTree leftMerkleTree) {
+		this.leftMerkleTree = leftMerkleTree;
+	}
+
+	public MerkleTree getRightMerkleTree() {
 		return rightMerkleTree;
 	}
-	
-	public Leaf getLeftLeaf() {
-		return leftLeaf;
+
+	public void setRightMerkleTree(MerkleTree rightMerkleTree) {
+		this.rightMerkleTree = rightMerkleTree;
 	}
-	
-	public Leaf getRightLeaf() {
-		return rightLeaf;
+
+	public Leaf getLeaf() {
+		return leaf;
+	}
+
+	public void setLeaf(Leaf leaf) {
+		this.leaf = leaf;
 	}
 
 }

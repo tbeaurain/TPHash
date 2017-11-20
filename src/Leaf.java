@@ -1,32 +1,44 @@
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 public class Leaf {
 
-	private final byte[] hashOfLogSingleEvent;
-
+	public byte[] hashOfLogSingleEvent = null;
+	public MessageDigest digest = null;
+	  
 	public Leaf(String logSingleEvent) {
-		hashOfLogSingleEvent = hash(logSingleEvent);
-	}
-
-	private byte[] hash(String string) {
-		byte[] stringToBytes = string.getBytes(StandardCharsets.UTF_8);
-		MessageDigest digest = null;
+		byte[] stringToBytes = logSingleEvent.getBytes(StandardCharsets.UTF_8);
 		try {
 			digest = MessageDigest.getInstance("SHA-256");
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
-		byte[] hash = null;
+		hashOfLogSingleEvent = null;
 		if (digest != null) {
-			hash = digest.digest(stringToBytes);
+			hashOfLogSingleEvent = digest.digest(stringToBytes);
 		}
-		return hash;
+	}
+
+	public String toString() {
+		return "Leaf [hashOfLogSingleEvent=" + Arrays.toString(hashOfLogSingleEvent) + ", digest=" + digest + "]";
 	}
 
 	public byte[] getHashOfLogSingleEvent() {
 		return hashOfLogSingleEvent;
+	}
+
+	public void setHashOfLogSingleEvent(byte[] hashOfLogSingleEvent) {
+		this.hashOfLogSingleEvent = hashOfLogSingleEvent;
+	}
+	
+	public MessageDigest getDigest() {
+		return digest;
+	}
+
+	public void setDigest(MessageDigest digest) {
+		this.digest = digest;
 	}
 
 }

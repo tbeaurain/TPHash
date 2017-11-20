@@ -3,26 +3,23 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
 
 	public static void main(String[] args) {
-
-		// todo: créer une méthode qui divise un fichier de texte en feuilles
-		// etc
-		// pour le moment les feuilles ne prennent en compte qu'une seule ligne
-		// du fichier de texte
-
-		File file = new File(
-				"C:/Users/Juliette/Documents/A3/Semestre 1/Architecture distribuée/tp/tp4/test.txt");
+		File file = new File("./DS1-trace.txt"); //emplacement du fhichier qu'on souhaite lire
 		buildMerkleTree(file);
+		
+		// test de la class leaf pour verifier que ca hash bien
+		
+		//Leaf leaf = new Leaf ("toto");
+		//System.out.println(leaf);
+		
 	}
 
+	// Fonction qui permet de creer l'arbre
 	private static void buildMerkleTree(File file) {
 		FileReader fileReader = null;
 		try {
@@ -32,14 +29,19 @@ public class Main {
 		}
 		BufferedReader bufferedReader = new BufferedReader(fileReader);
 		String line;
-		List<byte[]> listOfHashes = new ArrayList<>();
-		List<String> listOfLines = new ArrayList<>();
+		List<MerkleTree> listOfTree = new ArrayList<>();
+		MerkleTree leftMerkleTree = new MerkleTree();
+		MerkleTree tree = new MerkleTree();
 		try {
 			while ((line = bufferedReader.readLine()) != null) {
-				final Leaf leaf = new Leaf(line);
-				byte[] hashOfLine = leaf.getHashOfLogSingleEvent();
-				listOfHashes.add(hashOfLine);
-				listOfLines.add(line);
+				Leaf leaf = new Leaf(line);
+				
+				tree = new MerkleTree(leftMerkleTree ,leaf);
+				
+				leftMerkleTree.setRightMerkleTree(tree);
+				leftMerkleTree = tree;
+				
+				listOfTree.add(tree);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -49,41 +51,12 @@ public class Main {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println(listOfHashes);
-		List<byte[]> newListHash=new ArrayList<>();
-		while(listOfHashes.size()!=1){
-			for (int i = 0; i < listOfHashes.size(); i++) {
-				if ((i + 1) < listOfHashes.size()) {
-					for(int j=0;j<listOfHashes.get(i).length;j++){
-//						newListHash.add(hash(listOfHashes.get(i).get(j)*listOfHashes.get(i + 1)));
-//						newListHash.add((listOfHashes.get(i).hashCode()+listOfHashes.get(i + 1).hashCode())
-					}
-					
-				}
-			}
-			System.out.println(listOfHashes);
-		}
-//		while(listOfHashes.size()!=1){
-//			long result = 17;
-//			for (byte[] hash:listOfHashes) result = 37*result + hash;
-//		}
-		
-		
+		System.out.println(listOfTree);
 	}
-
-	private static byte[] hash(String string) {
-		byte[] stringToBytes = string.getBytes(StandardCharsets.UTF_8);
-		MessageDigest digest = null;
-		try {
-			digest = MessageDigest.getInstance("SHA-256");
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
-		byte[] hash = null;
-		if (digest != null) {
-			hash = digest.digest(stringToBytes);
-		}
-		return hash;
+	
+	//lire une liste de byte
+	public static void printByte (List<byte[]> liste){
+		for (int i = 0; i < liste.size(); i++)
+			System.out.println(liste.get(i));
 	}
-
 }
